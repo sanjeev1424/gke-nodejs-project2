@@ -1,0 +1,10 @@
+# Minimal Cloud Deploy pipeline that deploys k8s manifests. You'll use the built image tag from Artifact Registry.
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+name: nodejs-pipeline
+spec:
+serialPipeline:
+stages:
+- targetId: gke-target
+profiles: []

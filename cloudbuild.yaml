@@ -1,0 +1,68 @@
+#for Cloud Build, no-cache build, push to Artifact Registry, tag with short SHA and latest
+options:
+machineType: "E2_HIGHCPU_8"
+
+
+steps:
+# Build docker image (no cache)
+- name: 'gcr.io/cloud-builders/docker'
+args: ['build','--no-cache','-t','$IMAGE_URI:$SHORT_SHA','.']
+
+
+# Tag also as :latest and semantic version (if provided via substitution)
+- name: 'gcr.io/cloud-builders/docker'
+args: ['tag','$IMAGE_URI:$SHORT_SHA','$IMAGE_URI:latest']
+
+
+# Push both tags
+- name: 'gcr.io/cloud-builders/docker'
+args: ['push','$IMAGE_URI:$SHORT_SHA']
+- name: 'gcr.io/cloud-builders/docker'
+args: ['push','$IMAGE_URI:latest']
+
+
+# Optional: run on-demand vulnerability scan (beta command). Requires Container Scanning API enabled.
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+entrypoint: 'bash'
+args:
+- '-c'
+- |
+# Try an on-demand scan (may be beta). If it fails, build will continue but you can fail the build by uncommenting `|| exit 1`.
+set -e
+if gcloud beta artifacts docker images scan "$IMAGE_URI:$SHORT_SHA" --project=$PROJECT_ID; then
+echo "Scan request submitted"
+else
+echo "On-demand scan failed or not available; continuing"
+fi
+
+
+# Create a simple manifest file for deployment (substitute image tag into k8s manifest in Cloud Deploy)
+- name: 'gcr.io/cloud-builders/gcloud'
+entrypoint: 'bash'
+args:
+- '-c'
+- |
+mkdir -p output
+echo "image: $IMAGE_URI:$SHORT_SHA" > output/image.properties
+
+
+artifacts:
+objects:
+location: 'gs://$ARTIFACTS_BUCKET/cloud-build-artifacts/'
+paths: ['output/*']
+
+
+substitutions:
+_REPO: 'gcp-nodejs-devops-example'
+_IMAGE_NAME: 'gcp-nodejs-devops-example'
+
+
+images:
+- '$IMAGE_URI:$SHORT_SHA'
+
+
+availableSecrets: {}
+
+
+# Timeout, adjust if needed
+timeout: '1200s'

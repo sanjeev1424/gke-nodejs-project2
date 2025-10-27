@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-demo
+labels:
+  app: nodejs-demo
+spec:
+  replicas: 2
+selector:
+  matchLabels:
+    app: nodejs-demo
+template:
+  metadata:
+    labels:
+      app: nodejs-demo
+  spec:
+    containers:
+    - name: nodejs-demo
+      image: IMAGE_REPLACE_ME
+      ports:
+        - containerPort: 8080
+      readinessProbe:
+        httpGet:
+        path: /health
+        port: 8080
+        initialDelaySeconds: 5
+        periodSeconds: 10
+      imagePullPolicy: IfNotPresent
