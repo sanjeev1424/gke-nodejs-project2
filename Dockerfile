@@ -1,26 +1,23 @@
-# Use a small official Node base image
+# Use a lightweight Node.js base image
 FROM node:18-bullseye-slim
 
-
-# Create app directory
+# Set working directory
 WORKDIR /usr/src/app
 
+# Copy dependency files first for caching
+COPY package*.json ./
 
-# Copy package files first for better layer caching
-COPY package.json package-lock.json* ./
-
-
-# Install deps
-RUN npm ci --only=production
-
+# Install production dependencies
+RUN npm ci --only=production && npm cache clean --force
 
 # Copy app source
 COPY . .
 
+# Ensure non-root user (best practice for security)
+USER node
 
-# Expose port
+# Expose port 8080
 EXPOSE 8080
 
-
-# Start
-CMD ["node","app.js"]
+# Start the app
+CMD ["node", "app.js"]
