@@ -2,27 +2,27 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nodejs-demo
-labels:
-  app: nodejs-demo
+  labels:
+    app: nodejs-demo
 spec:
   replicas: 2
-selector:
-  matchLabels:
-    app: nodejs-demo
-template:
-  metadata:
-    labels:
+  selector:
+    matchLabels:
       app: nodejs-demo
-  spec:
-    containers:
-    - name: nodejs-demo
-      image: IMAGE_REPLACE_ME
-      ports:
-        - containerPort: 8080
-      readinessProbe:
-        httpGet:
-        path: /health
-        port: 8080
-        initialDelaySeconds: 5
-        periodSeconds: 10
-      imagePullPolicy: IfNotPresent
+  template:
+    metadata:
+      labels:
+        app: nodejs-demo
+    spec:
+      containers:
+        - name: nodejs-demo
+          image: IMAGE_REPLACE_ME #asia-south1-docker.pkg.dev/tidy-reporter-474515-a2/asia-south1-docker/gke-nodejs-project2:e1bce3f
+          imagePullPolicy: Always #IfNotPresent
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
