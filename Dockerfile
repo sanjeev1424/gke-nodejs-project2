@@ -1,4 +1,4 @@
-# Use a lightweight Node.js base image
+# Use a lightweight Node.js base image ...
 FROM node:18-bullseye-slim
 
 # Set working directory
