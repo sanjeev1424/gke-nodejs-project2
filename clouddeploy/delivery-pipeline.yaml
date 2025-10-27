@@ -2,9 +2,9 @@
 apiVersion: deploy.cloud.google.com/v1
 kind: DeliveryPipeline
 metadata:
-name: nodejs-pipeline
+  name: nodejs-pipeline
 spec:
-serialPipeline:
-stages:
-- targetId: gke-target
-profiles: []
+  serialPipeline:
+  stages:
+  - targetId: gke-target
+    profiles: []
