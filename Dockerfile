@@ -10,6 +10,8 @@ COPY package*.json ./
 # Install production dependencies
 RUN npm ci --only=production && npm cache clean --force
 
+# Alternative way (no lockfile)
+# RUN npm install --omit=dev && npm cache clean --force
 # Copy app source
 COPY . .
 
