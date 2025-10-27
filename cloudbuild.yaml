@@ -4,6 +4,7 @@
 
 options:
   machineType: "E2_HIGHCPU_8"
+  logging: CLOUD_LOGGING_ONLY  # ✅ Added to fix build.service_account error
 
 steps:
 # 1) Build docker image with --no-cache and tag with SHORT_SHA
@@ -40,14 +41,13 @@ steps:
     - "-c"
     - |
       set -e
-      # Try on-demand scan (if available in your project). If it errors, we continue.
       if gcloud beta artifacts docker images scan "${_IMAGE_URI}:${SHORT_SHA}" --project="${PROJECT_ID}"; then
         echo "Scan request submitted"
       else
         echo "On-demand scan not available or failed; continuing"
       fi
 
-# 5) Write a small artifact (image property) that other systems (Cloud Deploy) can consume
+# 5) Write artifact for Cloud Deploy or other systems
 - name: "gcr.io/cloud-builders/gcloud"
   entrypoint: "bash"
   args:
@@ -56,19 +56,15 @@ steps:
       mkdir -p output
       echo "image: ${_IMAGE_URI}:${SHORT_SHA}" > output/image.properties
 
-# Optional artifacts storage (Cloud Build will upload the output/* files to GCS)
 artifacts:
   objects:
     location: "gs://${_ARTIFACTS_BUCKET}/cloud-build-artifacts/"
     paths:
       - "output/*"
 
-# Substitutions (these are defaults; set or override them in the trigger UI)
 substitutions:
   _IMAGE_NAME: "gke-nodejs-project2"
   _REPO: "gke-nodejs-project2"
-  # _IMAGE_URI and _ARTIFACTS_BUCKET should be set in the Cloud Build trigger substitutions
-  # Example _IMAGE_URI: asia-south1-docker.pkg.dev/tidy-reporter-474515-a2/asia-south1-docker/gke-nodejs-project2
 
 images:
   - "${_IMAGE_URI}:${SHORT_SHA}"
