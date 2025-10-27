@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nodejs-demo
-          image: IMAGE_REPLACE_ME #asia-south1-docker.pkg.dev/tidy-reporter-474515-a2/asia-south1-docker/gke-nodejs-project2:e1bce3f
+          image: IMAGE_REPLACE_ME #asia-south1-docker.pkg.dev/tidy-reporter-474515-a2/asia-south1-docker/gke-nodejs-project2:5db3380
           imagePullPolicy: Always #IfNotPresent
           ports:
             - containerPort: 8080

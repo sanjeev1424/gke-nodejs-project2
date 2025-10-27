@@ -1,0 +1,7 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: gke-target
+description: "GKE target for asia-south1 cluster"
+gke:
+  cluster: projects/tidy-reporter-474515-a2/locations/asia-south1/clusters/my-k8-cluster

@@ -1,0 +1,10 @@
+# manifest for release generation
+apiVersion: deploy.cloud.google.com/v1
+kind: Release
+metadata:
+  name: placeholder
+render:
+  kubernetes:
+    manifests:
+      - k8s/deployment.yml
+      - k8s/service.yml

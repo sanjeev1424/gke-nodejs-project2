@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Deployment Status</title>
+  <style>
+    body { font-family: Arial; background: #f9fafb; color: #333; text-align: center; padding: 50px; }
+    h1 { color: #2563eb; }
+    .version { font-size: 20px; margin-top: 20px; color: #047857; }
+  </style>
+</head>
+<body>
+  <h1>Node.js GKE App - Deployment Info</h1>
+  <p class="version">
+    Current Image: <span id="image"></span><br/>
+    Last Updated: <span id="time"></span>
+  </p>
+
+  <script>
+    fetch('/version.json')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('image').textContent = data.image;
+        document.getElementById('time').textContent = data.updatedAt;
+      })
+      .catch(() => document.body.innerHTML += '<p>Error loading version info</p>');
+  </script>
+</body>
+</html>
